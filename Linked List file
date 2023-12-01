@@ -1,0 +1,128 @@
+class LinkedListNode<T> {
+    var value: T
+    var nextNode: LinkedListNode<T>?
+    var previousNode: LinkedListNode<T>?
+    
+    init(value: T) {
+        self.value = value
+    }
+}
+
+struct LinkedList<T> {
+    typealias ListNode = LinkedListNode<T>
+    
+    var head: ListNode?
+    
+   public var first: ListNode? {
+        return head
+    }
+    
+    var last: ListNode? {
+        guard var head = head else { return nil }
+        while let nextNode = head.nextNode {
+            head = nextNode
+        }
+        return head
+    }
+    
+    mutating func node(at index: Int) -> ListNode {
+        if index == 0 {
+            return head!
+        } else {
+            var node = head?.nextNode
+            for _ in 1..<index {
+                node = node?.nextNode
+                if node == nil { break }
+            }
+            return node!
+        }
+    }
+    
+    mutating func append(value: T) {
+        var newNode = ListNode(value: value)
+        
+        if let lastNode = last {
+            newNode.previousNode = lastNode
+            lastNode.nextNode = newNode
+        } else {
+            head = newNode
+        }
+    }
+    
+    //Insert at method
+    
+    mutating func insert(value: T, at index: Int) {
+        var newNode = ListNode(value: value)
+        
+        if index == 0 {
+            head?.previousNode = newNode
+            newNode.nextNode = head
+            head = newNode
+        } else {
+            var prev = node(at: index - 1)
+            var next = prev.nextNode
+            
+            newNode.previousNode = prev
+            newNode.nextNode = prev.nextNode
+            
+            prev.nextNode = newNode
+            next?.previousNode = newNode
+        }
+    }
+    
+    
+    
+    
+        
+    //Remove at two methods
+    
+    private mutating func remove(node: ListNode) -> T {
+        var prev = node.previousNode
+        var next = node.nextNode
+        
+        if let prev = prev {
+            prev.nextNode = next
+        } else {
+            head = next
+        }
+        next?.previousNode = prev //If next is nil, the rest of the expression is ignored, and no assignment is made.
+        
+        node.previousNode = nil
+        node.nextNode = nil
+
+        return node.value
+    }
+    
+    
+    
+    public mutating func removeAt(index: Int) -> T {
+        let needNode = node(at: index)
+        
+        return remove(node: needNode)
+    }
+    
+    //Print all node from head to tail
+    public mutating func showAllOfThem(node: ListNode?) {
+        
+        var current = node
+        
+        while current != nil {
+            print(current!.value)
+            current = current?.nextNode
+        }
+    }
+    
+}
+
+
+var sampleLL = LinkedList<Int>()
+sampleLL.append(value: 7)
+sampleLL.append(value: 2)
+sampleLL.append(value: 3)
+sampleLL.insert(value: 222, at: 3)
+sampleLL.node(at: 0).value
+sampleLL.insert(value: 7, at: 0)
+sampleLL.node(at: 0).value
+sampleLL.insert(value: 10, at: 1)
+sampleLL.node(at: 0).value
+sampleLL.showAllOfThem(node: sampleLL.first)
